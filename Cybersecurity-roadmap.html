@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybersecurity Roadmap</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;800&display=swap');
+
+    :root {
+      --bg: #050a0e;
+      --surface: #0a1520;
+      --surface2: #0f1e2e;
+      --border: #1a3a5c;
+      --accent: #00d4ff;
+      --accent2: #00ff9d;
+      --accent3: #ff6b35;
+      --warn: #ffcc00;
+      --text: #c8dff0;
+      --text-dim: #5a8ab0;
+      --text-bright: #eaf6ff;
+      --glow: rgba(0, 212, 255, 0.15);
+      --glow2: rgba(0, 255, 157, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Exo 2', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(0, 80, 120, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0, 60, 40, 0.12) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0.03) 4px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .header-badge {
+      display: inline-block;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--accent2);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      border: 1px solid var(--accent2);
+      padding: 4px 16px;
+      margin-bottom: 20px;
+      opacity: 0.8;
+    }
+
+    h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 700;
+      color: var(--text-bright);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    h1 span {
+      color: var(--accent);
+      text-shadow: 0 0 30px var(--accent);
+    }
+
+    .subtitle {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      margin-top: 12px;
+    }
+
+    .profile-bar {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .profile-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(0, 212, 255, 0.07);
+      border: 1px solid rgba(0, 212, 255, 0.25);
+      padding: 5px 14px;
+      letter-spacing: 1px;
+    }
+
+    /* Timeline nav */
+    .phase-nav {
+      display: flex;
+      gap: 0;
+      margin-bottom: 48px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .phase-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 1px;
+      padding: 14px 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+
+    .phase-btn:last-child {
+      border-right: none;
+    }
+
+    .phase-btn:hover {
+      background: var(--glow);
+      color: var(--accent);
+    }
+
+    .phase-btn.active {
+      background: rgba(0, 212, 255, 0.12);
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .phase-btn .phase-num {
+      display: block;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-bottom: 2px;
+    }
+
+    .phase-btn.active .phase-num {
+      color: var(--accent2);
+    }
+
+    /* Phase content */
+    .phase-panel {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .phase-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 36px;
+      padding: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+    }
+
+    .phase-icon {
+      font-size: 36px;
+      min-width: 48px;
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    .phase-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-bright);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .phase-meta {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--accent2);
+      margin-top: 4px;
+      letter-spacing: 1px;
+    }
+
+    .phase-desc {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    /* Projects */
+    .project-card {
+      margin-bottom: 28px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      overflow: hidden;
+    }
+
+    .project-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+      user-select: none;
+    }
+
+    .project-header:hover {
+      background: var(--glow);
+    }
+
+    .project-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      padding: 3px 10px;
+      min-width: 52px;
+      text-align: center;
+    }
+
+    .project-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-bright);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      flex: 1;
+    }
+
+    .project-difficulty {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      padding: 3px 10px;
+      border: 1px solid;
+      letter-spacing: 1px;
+    }
+
+    .diff-beginner {
+      color: var(--accent2);
+      border-color: var(--accent2);
+    }
+
+    .diff-intermediate {
+      color: var(--warn);
+      border-color: var(--warn);
+    }
+
+    .diff-advanced {
+      color: var(--accent3);
+      border-color: var(--accent3);
+    }
+
+    .project-chevron {
+      color: var(--text-dim);
+      font-size: 14px;
+      transition: transform 0.3s;
+    }
+
+    .project-card.open .project-chevron {
+      transform: rotate(180deg);
+    }
+
+    .project-body {
+      display: none;
+      padding: 0 20px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .project-card.open .project-body {
+      display: block;
+    }
+
+    .project-goal {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.7;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    /* Topics */
+    .topics-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .topic {
+      margin-bottom: 20px;
+      padding: 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--accent2);
+    }
+
+    .topic-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .topic-learn {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .tasks-list {
+      list-style: none;
+      margin-bottom: 12px;
+    }
+
+    .tasks-list li {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      padding: 4px 0 4px 20px;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .tasks-list li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    .acceptance {
+      background: rgba(0, 255, 157, 0.05);
+      border: 1px solid rgba(0, 255, 157, 0.2);
+      padding: 10px 14px;
+      margin-bottom: 10px;
+    }
+
+    .acceptance-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      color: var(--accent2);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .acceptance p {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .resources {
+      margin-top: 10px;
+    }
+
+    .resources-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      color: var(--warn);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .resource-link {
+      display: inline-block;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      padding: 3px 10px;
+      margin: 3px 4px 3px 0;
+      text-decoration: none;
+      transition: all 0.15s;
+      background: rgba(0, 212, 255, 0.04);
+    }
+
+    .resource-link:hover {
+      background: rgba(0, 212, 255, 0.15);
+      border-color: var(--accent);
+    }
+
+    /* Resume badge */
+    .resume-badge {
+      display: inline-block;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      color: var(--accent3);
+      border: 1px solid var(--accent3);
+      padding: 2px 10px;
+      letter-spacing: 1px;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    /* Overall progress bar decorative */
+    .roadmap-overview {
+      margin-bottom: 48px;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .overview-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    .phase-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .phase-overview-item {
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .phase-overview-item:hover {
+      border-color: var(--accent);
+      background: var(--glow);
+    }
+
+    .poi-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      color: var(--accent2);
+    }
+
+    .poi-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-bright);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 2px 0;
+    }
+
+    .poi-duration {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+    /* Utility */
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0;
+    }
+
+    @media (max-width: 600px) {
+      .phase-nav {
+        flex-direction: column;
+      }
+
+      .phase-btn {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .profile-bar {
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="scanlines"></div>
+  <div class="container">
+
+    <header>
+      <div class="header-badge">// CYBERSECURITY LEARNING PATH //</div>
+      <h1>CYBER<span>SEC</span> ROADMAP</h1>
+      <div class="subtitle">[ PROJECT-BASED · HANDS-ON · RESUME-READY ]</div>
+      <div class="profile-bar">
+        <span class="profile-tag">▸ LINUX NATIVE</span>
+        <span class="profile-tag">▸ DEVOPS BACKGROUND</span>
+        <span class="profile-tag">▸ ERP/WEB DEV</span>
+        <span class="profile-tag">▸ BUILD TO LEARN</span>
+      </div>
+    </header>
+
+    <div class="roadmap-overview">
+      <div class="overview-title">// ROADMAP OVERVIEW — CLICK TO JUMP</div>
+      <div class="phase-overview-grid">
+        <div class="phase-overview-item" onclick="showPhase(0)">
+          <div class="poi-num">PHASE 01</div>
+          <div class="poi-name">Foundations</div>
+          <div class="poi-duration">~6–8 weeks</div>
+        </div>
+        <div class="phase-overview-item" onclick="showPhase(1)">
+          <div class="poi-num">PHASE 02</div>
+          <div class="poi-name">Networking & Recon</div>
+          <div class="poi-duration">~6–8 weeks</div>
+        </div>
+        <div class="phase-overview-item" onclick="showPhase(2)">
+          <div class="poi-num">PHASE 03</div>
+          <div class="poi-name">Offense & Exploits</div>
+          <div class="poi-duration">~8–10 weeks</div>
+        </div>
+        <div class="phase-overview-item" onclick="showPhase(3)">
+          <div class="poi-num">PHASE 04</div>
+          <div class="poi-name">Defense & Blue Team</div>
+          <div class="poi-duration">~6–8 weeks</div>
+        </div>
+        <div class="phase-overview-item" onclick="showPhase(4)">
+          <div class="poi-num">PHASE 05</div>
+          <div class="poi-name">Specialization</div>
+          <div class="poi-duration">~8–12 weeks</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-nav">
+      <button class="phase-btn active" onclick="showPhase(0)"><span class="phase-num">01</span>Foundations</button>
+      <button class="phase-btn" onclick="showPhase(1)"><span class="phase-num">02</span>Networking</button>
+      <button class="phase-btn" onclick="showPhase(2)"><span class="phase-num">03</span>Offense</button>
+      <button class="phase-btn" onclick="showPhase(3)"><span class="phase-num">04</span>Defense</button>
+      <button class="phase-btn" onclick="showPhase(4)"><span class="phase-num">05</span>Specialization</button>
+    </div>
+
+    <!-- PHASE 1 -->
+    <div class="phase-panel active" id="phase-0">
+      <div class="phase-header">
+        <div class="phase-icon">🛡️</div>
+        <div>
+          <div class="phase-title">Phase 01 — Foundations</div>
+          <div class="phase-meta">// DURATION: 6–8 WEEKS · DIFFICULTY: BEGINNER</div>
+          <div class="phase-desc">Build the bedrock. Before hacking anything you need to understand how systems,
+            networks, and Linux internals actually work. Your DevOps background is a huge head start. This phase turns
+            your existing knowledge into a security-aware mindset.</div>
+        </div>
+      </div>
+
+      <!-- Project 1.1 -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">P-1.1</div>
+          <div class="project-title">Build Your Hacking Lab <span class="resume-badge">RESUME</span></div>
+          <div class="project-difficulty diff-beginner">BEGINNER</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Goal:</strong> Set up a safe, isolated environment on your Linux machine
+            using VMs where you can practice attacking and defending without risk. This becomes your lab that you'll use
+            for the rest of the roadmap.</div>
+          <div class="topics-title">// TOPICS & MILESTONES</div>
+
+          <div class="topic">
+            <div class="topic-name">1. Virtualization & Networking Setup</div>
+            <div class="topic-learn">Understand how VMs work, how to create isolated networks, and how traffic flows
+              between them. You'll use KVM/QEMU (native Linux) or VirtualBox.</div>
+            <ul class="tasks-list">
+              <li>Install VirtualBox or configure KVM/QEMU on Ubuntu</li>
+              <li>Create an isolated "host-only" network adapter</li>
+              <li>Spin up Kali Linux VM (attacker) and Metasploitable2 VM (victim)</li>
+              <li>Verify VMs can ping each other but NOT reach the internet</li>
+              <li>Snapshot both VMs so you can restore after experiments</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>Kali can ping Metasploitable2. Metasploitable2 cannot reach 8.8.8.8. Both VMs are snapshotted. You can
+                write a brief network diagram of your lab in your notes.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://www.kali.org/docs/virtualization/install-virtualbox-guest-vm/"
+                target="_blank">Kali VirtualBox Guide (Official)</a>
+              <a class="resource-link"
+                href="https://www.freecodecamp.org/news/build-a-private-hacking-lab-with-virtualbox/"
+                target="_blank">Private Hacking Lab Guide (freeCodeCamp)</a>
+              <a class="resource-link" href="https://www.golinuxcloud.com/setup-hacking-lab-with-metasploitable/"
+                target="_blank">Metasploitable2 Setup (GoLinuxCloud)</a>
+              <a class="resource-link" href="https://www.stationx.net/how-to-create-a-virtual-hacking-lab/"
+                target="_blank">Full Lab Setup Guide (StationX)</a>
+              <a class="resource-link" href="https://sourceforge.net/projects/metasploitable/"
+                target="_blank">Metasploitable2 Download</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">2. Linux Security Hardening Basics</div>
+            <div class="topic-learn">Learn to think like a defender first — understand file permissions, users, sudoers,
+              SSH keys, firewall (ufw/iptables), and audit logs.</div>
+            <ul class="tasks-list">
+              <li>Audit your Ubuntu host: list all open ports (ss -tulpn), running services, SUID binaries</li>
+              <li>Create a non-root user, set up SSH key auth, disable password login, disable root SSH</li>
+              <li>Configure ufw: deny all incoming, allow only SSH from specific IP</li>
+              <li>Read /var/log/auth.log and identify failed login attempts</li>
+              <li>Write a bash script that automates this hardening checklist</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>Your hardening script runs cleanly. SSH only accepts key auth. UFW is active. You can explain what each
+                rule does. You have a written checklist of 10+ security items you audited.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link"
+                href="https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu"
+                target="_blank">Ubuntu Server Setup (DigitalOcean)</a>
+              <a class="resource-link" href="https://linuxhandbook.com/linux-file-permissions/" target="_blank">Linux
+                File Permissions (LinuxHandbook)</a>
+              <a class="resource-link"
+                href="https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-permissions"
+                target="_blank">Intro to Linux Permissions (DigitalOcean)</a>
+              <a class="resource-link" href="https://linuxhandbook.com/suid-sgid-sticky-bit/" target="_blank">SUID /
+                SGID / Sticky Bit (LinuxHandbook)</a>
+              <a class="resource-link" href="https://tryhackme.com/room/linuxfundamentalspart1"
+                target="_blank">TryHackMe Linux Fundamentals (free)</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">3. Python for Security Scripting</div>
+            <div class="topic-learn">Write small security tools. Python is the lingua franca of security. You'll build a
+              port scanner from scratch — not using nmap, but using raw sockets.</div>
+            <ul class="tasks-list">
+              <li>Build a TCP port scanner using Python sockets (scan a range of ports)</li>
+              <li>Add threading to make it fast</li>
+              <li>Add banner grabbing (connect and read what the service says)</li>
+              <li>Save output to a JSON report file</li>
+              <li>Test it against your Metasploitable VM</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>Your scanner can scan 1-1024 ports on Metasploitable in under 30 seconds, grabs banners from open
+                ports, and outputs a JSON report. Code is on GitHub.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://realpython.com/python-sockets/" target="_blank">Python Sockets Deep
+                Dive (RealPython)</a>
+              <a class="resource-link" href="https://thepythoncode.com/article/make-port-scanner-python"
+                target="_blank">Port Scanner in Python (thepythoncode)</a>
+              <a class="resource-link" href="https://www.geeksforgeeks.org/port-scanner-using-python/"
+                target="_blank">Port Scanner with Threading (GeeksforGeeks)</a>
+              <a class="resource-link" href="https://docs.python.org/3/library/socket.html" target="_blank">Python
+                Socket Docs (Official)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 1.2 -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">P-1.2</div>
+          <div class="project-title">CTF — First Blood (Beginner Platforms)</div>
+          <div class="project-difficulty diff-beginner">BEGINNER</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Goal:</strong> Solve 10 beginner CTF challenges across TryHackMe and
+            PicoCTF. CTFs train the problem-solving mindset. Each solved challenge = one skill locked in.</div>
+
+          <div class="topic">
+            <div class="topic-name">1. TryHackMe Learning Paths</div>
+            <div class="topic-learn">TryHackMe is a guided platform where you learn through hacking. The "Pre-Security"
+              and "Introduction to Cybersecurity" paths are perfect for your level.</div>
+            <ul class="tasks-list">
+              <li>Complete "Pre-Security" path on TryHackMe (free)</li>
+              <li>Complete "Linux Fundamentals" rooms 1, 2, 3</li>
+              <li>Complete "Intro to Networking" room</li>
+              <li>Complete "Intro to Web Hacking" room</li>
+              <li>Document what you learned from each room in a personal wiki (Obsidian is great)</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>Pre-Security path 100% complete on TryHackMe. Personal notes exist for every room. You can explain
+                TCP/IP model, HTTP request/response cycle, and Linux file system from memory.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://tryhackme.com/path/outline/presecurity" target="_blank">TryHackMe
+                Pre-Security Path (free)</a>
+              <a class="resource-link" href="https://obsidian.md" target="_blank">Obsidian (free notes app)</a>
+              <a class="resource-link" href="https://picoctf.org" target="_blank">PicoCTF (free)</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">2. Cryptography Basics</div>
+            <div class="topic-learn">Understand encoding vs encryption, hashing, symmetric vs asymmetric crypto. These
+              come up in literally every CTF and every real-world security job.</div>
+            <ul class="tasks-list">
+              <li>Solve 5 PicoCTF cryptography challenges</li>
+              <li>Manually decode base64, hex, rot13 from the command line</li>
+              <li>Crack an MD5 hash using hashcat on your Kali VM</li>
+              <li>Write a Python script that encrypts/decrypts a message with AES (using cryptography library)</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>5 PicoCTF crypto challenges solved. You can identify encoding vs encryption on sight. You've cracked at
+                least one hash with hashcat. Your AES script works and is on GitHub.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://cryptohack.org" target="_blank">CryptoHack (free, interactive)</a>
+              <a class="resource-link" href="https://www.youtube.com/watch?v=NuyzuNBFWxQ" target="_blank">Cryptography
+                Basics Explained (YT)</a>
+              <a class="resource-link" href="https://crackstation.net" target="_blank">CrackStation (online hash
+                cracker)</a>
+              <a class="resource-link" href="https://hashcat.net/wiki/" target="_blank">Hashcat Wiki (offline
+                cracking)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="phase-panel" id="phase-1">
+      <div class="phase-header">
+        <div class="phase-icon">🌐</div>
+        <div>
+          <div class="phase-title">Phase 02 — Networking & Reconnaissance</div>
+          <div class="phase-meta">// DURATION: 6–8 WEEKS · DIFFICULTY: BEGINNER–INTERMEDIATE</div>
+          <div class="phase-desc">You cannot hack what you cannot understand. This phase is about seeing the network
+            like an attacker does — mapping it, fingerprinting it, and finding attack surface before touching a single
+            exploit.</div>
+        </div>
+      </div>
+
+      <!-- Project 2.1 -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">P-2.1</div>
+          <div class="project-title">Network Mapper & Recon Tool <span class="resume-badge">RESUME</span></div>
+          <div class="project-difficulty diff-intermediate">INTERMEDIATE</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Goal:</strong> Build a full recon pipeline — from discovering hosts on a
+            network to fingerprinting services and generating an HTML attack surface report. This becomes a real
+            portfolio project.</div>
+
+          <div class="topic">
+            <div class="topic-name">1. Nmap Mastery</div>
+            <div class="topic-learn">Nmap is the foundational tool for network recon. You need to understand what every
+              flag does — not just copy-paste commands.</div>
+            <ul class="tasks-list">
+              <li>Run 10 different nmap scans against Metasploitable: SYN, UDP, version, OS detection, script scans</li>
+              <li>Parse nmap XML output with Python to extract host/port/service data</li>
+              <li>Identify all running services on Metasploitable and their versions</li>
+              <li>Look up each service's CVEs on NVD (nvd.nist.gov)</li>
+              <li>Write a Python wrapper that runs nmap and auto-generates a Markdown vulnerability report</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>Your Python tool runs nmap, parses the XML, cross-references versions with a CVE list, and outputs a
+                clean Markdown report with risk levels. Tested on Metasploitable. On GitHub with README.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://nmap.org/book/man.html" target="_blank">Nmap Reference Guide
+                (Official)</a>
+              <a class="resource-link" href="https://tryhackme.com/room/furthernmap" target="_blank">TryHackMe Further
+                Nmap Room</a>
+              <a class="resource-link" href="https://tryhackme.com/room/rpnmap" target="_blank">TryHackMe Nmap Room</a>
+              <a class="resource-link" href="https://nvd.nist.gov" target="_blank">NVD CVE Database</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">2. Packet Analysis with Wireshark & tcpdump</div>
+            <div class="topic-learn">Understand what's actually happening on the wire. Every attack generates traffic.
+              Learn to read it.</div>
+            <ul class="tasks-list">
+              <li>Capture traffic between your two VMs using Wireshark</li>
+              <li>Filter and identify: ARP, DNS, HTTP, FTP, Telnet packets</li>
+              <li>Capture an FTP login on Metasploitable — extract the plaintext credentials from the capture</li>
+              <li>Use tcpdump from the command line to capture and filter traffic by port/protocol</li>
+              <li>Write a Python script using Scapy to craft and send a custom TCP packet</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>You can identify a protocol from a packet capture in under 30 seconds. You've extracted real
+                credentials from an FTP capture. Your Scapy script successfully sends a SYN packet and captures the
+                SYN-ACK.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://www.wireshark.org/docs/wsug_html_chunked/"
+                target="_blank">Wireshark User Guide (Official)</a>
+              <a class="resource-link" href="https://scapy.readthedocs.io" target="_blank">Scapy Docs</a>
+              <a class="resource-link" href="https://tryhackme.com/room/wiresharkthebasics" target="_blank">TryHackMe
+                Wireshark: The Basics</a>
+              <a class="resource-link" href="https://tryhackme.com/room/wiresharkpacketoperations"
+                target="_blank">TryHackMe Wireshark: Packet Operations</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">3. OSINT — Open Source Intelligence</div>
+            <div class="topic-learn">Before touching a target's network, attackers research. OSINT is the art of
+              gathering public information. Critical for real pentesting engagements.</div>
+            <ul class="tasks-list">
+              <li>Use theHarvester to gather emails/subdomains for a public company (ethically — use a domain you own or
+                test domains)</li>
+              <li>Use Shodan to find internet-exposed services (Shodan free tier)</li>
+              <li>Use whois, dig, and nslookup to map DNS records of a target domain</li>
+              <li>Document a full OSINT report on a fake company using only public info</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>You produce a written OSINT report template with sections: DNS records, email format, subdomains, tech
+                stack, public employee data. You can execute this template on any target domain in 30 minutes.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://github.com/laramies/theHarvester" target="_blank">theHarvester
+                (GitHub)</a>
+              <a class="resource-link" href="https://www.shodan.io" target="_blank">Shodan (free tier)</a>
+              <a class="resource-link" href="https://osintframework.com" target="_blank">OSINT Framework</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 2.2 -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">P-2.2</div>
+          <div class="project-title">HackTheBox — Starting Point Machines</div>
+          <div class="project-difficulty diff-intermediate">INTERMEDIATE</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Goal:</strong> Complete 5 HackTheBox "Starting Point" machines. These are
+            guided, real-system hacks. Write a writeup for each — writeups are incredibly valuable for your portfolio.
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">1. HTB Starting Point Track</div>
+            <div class="topic-learn">Starting Point machines walk you through foundational techniques: SMB enumeration,
+              FTP anonymous login, SQL injection basics, and more. Writing writeups forces you to understand what you
+              did and why.</div>
+            <ul class="tasks-list">
+              <li>Compromise "Meow" (Telnet), "Fawn" (FTP), "Dancing" (SMB)</li>
+              <li>Compromise "Redeemer" (Redis) and "Explosion" (RDP)</li>
+              <li>Write a professional writeup for each — document your methodology, tools used, what you learned</li>
+              <li>Publish writeups on a GitHub Pages blog or Medium</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>5 machines rooted. 5 writeups published publicly. Each writeup has: recon section, exploitation
+                section, lessons learned. Your HTB profile shows completion. This is direct portfolio material.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://app.hackthebox.com/starting-point" target="_blank">HTB Starting
+                Point (free)</a>
+              <a class="resource-link" href="https://github.com/d0n601/HTB_Writeup-Template" target="_blank">HTB Writeup
+                Template (GitHub)</a>
+              <a class="resource-link" href="https://pages.github.com" target="_blank">GitHub Pages (free blog)</a>
+              <a class="resource-link" href="https://www.youtube.com/@ippsec" target="_blank">IppSec HTB Walkthroughs
+                (YT)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="phase-panel" id="phase-2">
+      <div class="phase-header">
+        <div class="phase-icon">⚔️</div>
+        <div>
+          <div class="phase-title">Phase 03 — Offensive Security & Exploitation</div>
+          <div class="phase-meta">// DURATION: 8–10 WEEKS · DIFFICULTY: INTERMEDIATE</div>
+          <div class="phase-desc">This is where it gets real. You'll learn web application hacking (your dev background
+            is gold here), exploit Metasploit, understand privilege escalation, and complete your first real pentest
+            report. Everything is done in your lab or on legal platforms.</div>
+        </div>
+      </div>
+
+      <!-- Project 3.1 -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">P-3.1</div>
+          <div class="project-title">Web Application Pentest — DVWA & Juice Shop <span
+              class="resume-badge">RESUME</span></div>
+          <div class="project-difficulty diff-intermediate">INTERMEDIATE</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Goal:</strong> Exploit every OWASP Top 10 vulnerability category in a real
+            intentionally-vulnerable web app. Your developer background means you'll understand both sides — why the
+            code is vulnerable AND how to fix it.</div>
+
+          <div class="topic">
+            <div class="topic-name">1. OWASP Top 10 — Hands-On</div>
+            <div class="topic-learn">The OWASP Top 10 is the bible of web security. You need to exploit each one,
+              understand the vulnerable code, and know how to fix it. This is directly what web pentesting jobs test
+              for.</div>
+            <ul class="tasks-list">
+              <li>Set up DVWA (Damn Vulnerable Web App) in your lab via Docker</li>
+              <li>Exploit SQL Injection: extract the entire users table manually (no sqlmap yet)</li>
+              <li>Exploit XSS (reflected + stored): steal a session cookie</li>
+              <li>Exploit CSRF: craft a malicious page that performs an action on behalf of a logged-in user</li>
+              <li>Exploit Command Injection: get a reverse shell to your Kali machine</li>
+              <li>Exploit File Upload: upload a PHP webshell, execute commands</li>
+              <li>For each: write the vulnerable code snippet AND the fix</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>You've manually exploited all 6 vulnerability types without automated tools first. You have a written
+                report explaining each vulnerability, proof of exploitation (screenshot), and recommended fix. Report is
+                portfolio-ready.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://github.com/digininja/DVWA" target="_blank">DVWA (GitHub)</a>
+              <a class="resource-link" href="https://owasp.org/www-project-juice-shop/" target="_blank">OWASP Juice
+                Shop</a>
+              <a class="resource-link" href="https://portswigger.net/web-security" target="_blank">PortSwigger Web
+                Academy (FREE)</a>
+              <a class="resource-link" href="https://owasp.org/Top10/" target="_blank">OWASP Top 10 (2021)</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">2. Burp Suite Workflow</div>
+            <div class="topic-learn">Burp Suite Community Edition is free and the industry-standard tool for web app
+              hacking. Learn to intercept, modify, and replay HTTP requests.</div>
+            <ul class="tasks-list">
+              <li>Configure Burp as proxy for your browser</li>
+              <li>Intercept and modify a login request — bypass weak auth in DVWA</li>
+              <li>Use Repeater to manually test SQLi payloads</li>
+              <li>Use Intruder (free, slow) to brute-force a login form</li>
+              <li>Scan Juice Shop with Burp's passive scanner</li>
+              <li>Complete 5 PortSwigger Web Security Academy labs</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>You can set up Burp, intercept any request, modify and replay it fluently. 5 PortSwigger labs
+                completed. You can demonstrate a SQLi attack through Burp Repeater in a screen recording.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://portswigger.net/burp/communitydownload" target="_blank">Burp Suite
+                Community (free download)</a>
+              <a class="resource-link" href="https://portswigger.net/web-security/learning-paths"
+                target="_blank">PortSwigger Learning Paths (free)</a>
+              <a class="resource-link" href="https://tryhackme.com/room/burpsuitebasics" target="_blank">TryHackMe Burp
+                Suite Basics</a>
+              <a class="resource-link" href="https://tryhackme.com/room/burpsuiterepeater" target="_blank">TryHackMe
+                Burp Suite Repeater</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">3. sqlmap & Automated Tools</div>
+            <div class="topic-learn">Now that you know how SQLi works manually, learn the automation. Understand what
+              the tool is doing under the hood.</div>
+            <ul class="tasks-list">
+              <li>Run sqlmap against DVWA's vulnerable parameter</li>
+              <li>Extract database, tables, and dump credentials</li>
+              <li>Use --tamper scripts to bypass WAF filters</li>
+              <li>Compare sqlmap's payloads to your manual ones — understand the difference</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>You can fully compromise a SQLi endpoint with sqlmap. You can explain the difference between
+                error-based, blind boolean, and time-based SQLi. You know why sqlmap's output shows what it shows.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://github.com/sqlmapproject/sqlmap/wiki/Usage" target="_blank">sqlmap
+                Wiki</a>
+              <a class="resource-link" href="https://tryhackme.com/room/sqlmap" target="_blank">TryHackMe sqlmap
+                Room</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 3.2 -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">P-3.2</div>
+          <div class="project-title">Full System Compromise — Metasploit & PrivEsc <span
+              class="resume-badge">RESUME</span></div>
+          <div class="project-difficulty diff-intermediate">INTERMEDIATE</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Goal:</strong> Fully compromise Metasploitable2 end-to-end: initial access →
+            privilege escalation → post-exploitation. Write a professional pentest report in the style of a real
+            security firm.</div>
+
+          <div class="topic">
+            <div class="topic-name">1. Metasploit Framework</div>
+            <div class="topic-learn">Metasploit is the most widely used exploitation framework. Understand how exploits,
+              payloads, and post-exploitation modules work — not just how to use msfconsole.</div>
+            <ul class="tasks-list">
+              <li>Use Metasploit to exploit vsftpd 2.3.4 backdoor on Metasploitable2</li>
+              <li>Use exploit/multi/handler to catch a reverse shell</li>
+              <li>Explore Meterpreter: hashdump, sysinfo, screenshot, upload/download</li>
+              <li>Exploit UnrealIRCd backdoor via Metasploit</li>
+              <li>Exploit Samba vulnerability (ms08_067 equivalent for Linux)</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>You've achieved root shells via 3 different Metasploit exploits on Metasploitable. You can explain what
+                a payload vs. an exploit vs. a module is. You've dumped password hashes and attempted to crack them.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://docs.metasploit.com" target="_blank">Metasploit Docs (Official)</a>
+              <a class="resource-link" href="https://tryhackme.com/room/metasploitintro" target="_blank">TryHackMe
+                Metasploit Intro</a>
+              <a class="resource-link" href="https://www.youtube.com/@TCMSecurityAcademy" target="_blank">TCM Security —
+                Metasploit (YT)</a>
+              <a class="resource-link" href="https://tryhackme.com/room/meterpreter" target="_blank">TryHackMe
+                Meterpreter Room</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">2. Privilege Escalation (Linux)</div>
+            <div class="topic-learn">Getting initial access is only 50% of the job. PrivEsc is how you go from
+              low-privilege user to root. This is tested in almost every CTF and pentest interview.</div>
+            <ul class="tasks-list">
+              <li>Enumerate PrivEsc vectors manually: SUID binaries, cron jobs, writable files, sudo -l, kernel version
+              </li>
+              <li>Run LinPEAS automated enumeration script and interpret its output</li>
+              <li>Exploit a SUID binary to get root on a TryHackMe PrivEsc room</li>
+              <li>Exploit a vulnerable sudo rule (NOPASSWD) to escalate</li>
+              <li>Exploit a writable cron job to get root</li>
+              <li>Complete TryHackMe "Linux PrivEsc" room</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>You can run a manual PrivEsc checklist from memory (or your own cheatsheet) in under 10 minutes. You've
+                escalated to root via 3 different methods. TryHackMe Linux PrivEsc room complete.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://github.com/carlospolop/PEASS-ng" target="_blank">LinPEAS
+                (GitHub)</a>
+              <a class="resource-link" href="https://tryhackme.com/room/linuxprivesc" target="_blank">TryHackMe Linux
+                PrivEsc</a>
+              <a class="resource-link" href="https://gtfobins.github.io" target="_blank">GTFOBins</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">3. Write a Professional Pentest Report</div>
+            <div class="topic-learn">A pentest without a report is worthless. This is the deliverable clients pay for.
+              Learn to write executive summaries, technical findings, severity ratings, and remediation guidance.</div>
+            <ul class="tasks-list">
+              <li>Document your full Metasploitable2 engagement from start to finish</li>
+              <li>Use CVSS scoring for each finding</li>
+              <li>Write an Executive Summary (non-technical, for a CEO)</li>
+              <li>Write Technical Findings for each vulnerability</li>
+              <li>Include: description, risk, proof of exploitation, remediation steps</li>
+              <li>Use a free report template (see resources)</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>You have a PDF pentest report of 8+ pages covering your Metasploitable engagement. It follows a
+                professional format with executive summary + technical findings. This is a real portfolio piece to show
+                employers.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://github.com/juliocesarfort/public-pentesting-reports"
+                target="_blank">Public Pentest Reports (GH)</a>
+              <a class="resource-link" href="https://github.com/hmaverickadams/TCM-Security-Sample-Pentest-Report"
+                target="_blank">TCM Sample Report (GH)</a>
+              <a class="resource-link" href="https://www.first.org/cvss/calculator/3.1" target="_blank">CVSS
+                Calculator</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 3.3 -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">P-3.3</div>
+          <div class="project-title">HTB / VulnHub Machines — Intermediate (5 Machines)</div>
+          <div class="project-difficulty diff-intermediate">INTERMEDIATE</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Goal:</strong> Root 5 intermediate machines on HTB or VulnHub without hints.
+            Write writeups for each. This builds real problem-solving skill and grows your portfolio.</div>
+          <div class="topic">
+            <div class="topic-name">Recommended Machines</div>
+            <div class="topic-learn">These machines cover common techniques seen in real pentests and job interviews:
+              web exploitation, PrivEsc, pivoting.</div>
+            <ul class="tasks-list">
+              <li>VulnHub: Mr. Robot 1 — real-world web app + PrivEsc</li>
+              <li>VulnHub: DC-1 (Drupal CMS exploitation)</li>
+              <li>HTB: Lame — classic SMB exploit</li>
+              <li>HTB: Blue — EternalBlue (understand the legendary exploit)</li>
+              <li>HTB: Jerry — Tomcat manager shell upload</li>
+              <li>Write and publish a writeup for each</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>All 5 machines rooted. Writeups published. You never looked at a walkthrough until AFTER you got root
+                (or gave up after 2 hours). Your writeups are linked from your GitHub profile README.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://www.vulnhub.com" target="_blank">VulnHub (free VMs)</a>
+              <a class="resource-link" href="https://app.hackthebox.com" target="_blank">HackTheBox</a>
+              <a class="resource-link" href="https://www.youtube.com/@ippsec" target="_blank">IppSec (HTB walkthroughs
+                YT)</a>
+              <a class="resource-link" href="https://github.com/d0n601/HTB_Writeup-Template" target="_blank">HTB Writeup
+                Template (GitHub)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div class="phase-panel" id="phase-3">
+      <div class="phase-header">
+        <div class="phase-icon">🔵</div>
+        <div>
+          <div class="phase-title">Phase 04 — Defense, Blue Team & Detection</div>
+          <div class="phase-meta">// DURATION: 6–8 WEEKS · DIFFICULTY: INTERMEDIATE</div>
+          <div class="phase-desc">The best attackers understand defense. This phase leverages your DevOps background
+            heavily — you'll build a SIEM, create detection rules, and learn to hunt threats. Blue Team skills are in
+            massive demand and often pay better than pure red team.</div>
+        </div>
+      </div>
+
+      <!-- Project 4.1 -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">P-4.1</div>
+          <div class="project-title">Build a Home SIEM Lab <span class="resume-badge">RESUME</span></div>
+          <div class="project-difficulty diff-intermediate">INTERMEDIATE</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Goal:</strong> Deploy a functional SIEM (Security Information & Event
+            Management) in your lab using free tools. Configure log ingestion, write detection rules, and trigger real
+            alerts from attacks you run yourself.</div>
+
+          <div class="topic">
+            <div class="topic-name">1. ELK Stack (Elasticsearch, Logstash, Kibana)</div>
+            <div class="topic-learn">ELK is the most widely deployed free SIEM stack. Understanding log aggregation,
+              parsing, and visualization is a core Blue Team skill and directly applies to your DevOps experience.</div>
+            <ul class="tasks-list">
+              <li>Deploy ELK Stack on a dedicated Ubuntu VM using Docker Compose</li>
+              <li>Configure Filebeat on Kali to ship logs to ELK</li>
+              <li>Configure Winlogbeat on a Windows VM (free trial) to ship Windows Event Logs</li>
+              <li>Ship auth.log, syslog, and apache logs to ELK</li>
+              <li>Build a Kibana dashboard: login failures, SSH activity, web traffic</li>
+              <li>Run a brute-force attack against your lab → observe it in Kibana in real-time</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>ELK is live and ingesting logs from 2+ sources. Your Kibana dashboard shows SSH login events. When you
+                run hydra against your Ubuntu VM, the failed logins appear in Kibana within 30 seconds. Dashboard is
+                screenshot-worthy for your portfolio.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://www.elastic.co/downloads/" target="_blank">ELK Stack Download
+                (free)</a>
+              <a class="resource-link"
+                href="https://www.elastic.co/guide/en/welcome-to-elastic/current/getting-started-general-purpose.html"
+                target="_blank">Elastic Getting Started Guide</a>
+              <a class="resource-link" href="https://tryhackme.com/room/investigatingwithelk101"
+                target="_blank">TryHackMe ELK 101 Room</a>
+              <a class="resource-link" href="https://tryhackme.com/room/itsybitsy" target="_blank">TryHackMe: ItsyBitsy
+                (ELK lab)</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">2. Detection Engineering — Write Sigma Rules</div>
+            <div class="topic-learn">Sigma is a generic signature format for SIEM rules — like Snort but for logs.
+              Writing detection rules is a highly sought skill. You'll write rules to detect the attacks from Phase 3.
+            </div>
+            <ul class="tasks-list">
+              <li>Learn Sigma rule format (yaml-based)</li>
+              <li>Write a Sigma rule to detect: SSH brute force (5+ failed logins in 60 seconds)</li>
+              <li>Write a Sigma rule to detect: successful login after multiple failures (spray attack)</li>
+              <li>Write a Sigma rule to detect: nmap SYN scan (detect by log patterns)</li>
+              <li>Convert your Sigma rules to Elastic/Kibana queries using sigma-cli</li>
+              <li>Test each rule — trigger it manually and confirm alert fires</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>3 working Sigma rules committed to GitHub. Each rule has a test procedure documented. When the attack
+                is executed in your lab, the alert fires in Kibana. Rules follow Sigma community standards.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://github.com/SigmaHQ/sigma" target="_blank">Sigma HQ (GitHub)</a>
+              <a class="resource-link" href="https://github.com/SigmaHQ/sigma/wiki" target="_blank">Sigma Wiki & Rule
+                Guide</a>
+              <a class="resource-link" href="https://github.com/SigmaHQ/sigma/tree/master/rules" target="_blank">Sigma
+                Community Rules (GitHub)</a>
+              <a class="resource-link" href="https://uncoder.io" target="_blank">Uncoder.io (rule converter)</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">3. Incident Response Simulation</div>
+            <div class="topic-learn">Blue Team doesn't just detect — they respond. Learn the incident response process
+              by simulating a real attack and then investigating it from scratch using only logs.</div>
+            <ul class="tasks-list">
+              <li>Run a full attack chain on your lab: nmap → exploit → reverse shell → PrivEsc → persistence</li>
+              <li>24 hours later, investigate the incident using ONLY the logs in your SIEM</li>
+              <li>Write an Incident Response report: timeline, indicators of compromise (IOCs), affected systems,
+                remediation</li>
+              <li>Complete TryHackMe "Incident Response" or "Cyber Defense" path rooms</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>You can reconstruct the full attack timeline from logs alone. Your IR report has a proper timeline, 5+
+                IOCs identified, and a remediation plan. This is a top-tier portfolio piece demonstrating both red and
+                blue skills.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://tryhackme.com/path/outline/cyberdefense" target="_blank">TryHackMe
+                Cyber Defense Path</a>
+              <a class="resource-link" href="https://www.cyberdefenders.org" target="_blank">CyberDefenders (free IR
+                labs)</a>
+              <a class="resource-link" href="https://attack.mitre.org" target="_blank">MITRE ATT&CK Framework</a>
+              <a class="resource-link" href="https://www.sans.org/score/incident-handler-s-handbook/"
+                target="_blank">SANS IR Handbook (free PDF)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 4.2 -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">P-4.2</div>
+          <div class="project-title">DevSecOps Pipeline — Security in Your CI/CD</div>
+          <div class="project-difficulty diff-intermediate">INTERMEDIATE</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Goal:</strong> This is where your DevOps background becomes a superpower.
+            Build a CI/CD pipeline with security gates: SAST, DAST, dependency scanning, container scanning. DevSecOps
+            engineers are incredibly valuable and rare.</div>
+
+          <div class="topic">
+            <div class="topic-name">1. Security Scanning in CI/CD</div>
+            <div class="topic-learn">Integrate security tools into a GitHub Actions pipeline. Many companies desperately
+              need engineers who speak both DevOps and security.</div>
+            <ul class="tasks-list">
+              <li>Create a deliberately vulnerable Node.js or Python app (or use a public one)</li>
+              <li>Set up GitHub Actions CI/CD pipeline</li>
+              <li>Add Semgrep (SAST) to scan for code vulnerabilities on every commit</li>
+              <li>Add Trivy to scan Docker images for CVEs</li>
+              <li>Add OWASP Dependency Check for third-party library vulnerabilities</li>
+              <li>Add OWASP ZAP (DAST) to scan the running app</li>
+              <li>Configure pipeline to FAIL on critical findings</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>Pipeline runs on every push. Critical vulnerabilities fail the build. Your GitHub repo README shows the
+                security scan badges. You can demo this pipeline to an interviewer in 5 minutes. Extremely impressive
+                for a portfolio.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://semgrep.dev/docs/" target="_blank">Semgrep Docs (free)</a>
+              <a class="resource-link" href="https://github.com/aquasecurity/trivy" target="_blank">Trivy Container
+                Scanner (GH)</a>
+              <a class="resource-link" href="https://www.zaproxy.org/docs/docker/baseline-scan/" target="_blank">OWASP
+                ZAP Docker Scan</a>
+              <a class="resource-link" href="https://docs.github.com/en/actions" target="_blank">GitHub Actions Docs</a>
+              <a class="resource-link" href="https://owasp.org/www-project-dependency-check/" target="_blank">OWASP
+                Dependency Check</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 5 -->
+    <div class="phase-panel" id="phase-4">
+      <div class="phase-header">
+        <div class="phase-icon">🎯</div>
+        <div>
+          <div class="phase-title">Phase 05 — Specialization & Career Launch</div>
+          <div class="phase-meta">// DURATION: 8–12 WEEKS · DIFFICULTY: INTERMEDIATE–ADVANCED</div>
+          <div class="phase-desc">Pick your lane. Based on your background, three paths make the most sense for you.
+            Each leads to real jobs. Pursue one primary path while keeping the others as secondary skills.</div>
+        </div>
+      </div>
+
+      <!-- Path A -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">PATH A</div>
+          <div class="project-title">Web App Pentester / Bug Bounty Hunter <span class="resume-badge">RECOMMENDED</span>
+          </div>
+          <div class="project-difficulty diff-advanced">ADVANCED</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Why this path:</strong> Your web development background (ERPNext/Frappe) is
+            a massive advantage. You understand how apps are built, which means you understand how to break them. Bug
+            bounty can generate income while you're still learning. Web app pentesting is the most in-demand
+            specialization.</div>
+
+          <div class="topic">
+            <div class="topic-name">1. Advanced Web Vulnerabilities</div>
+            <div class="topic-learn">Go beyond OWASP Top 10. Learn SSRF, XXE, Insecure Deserialization, OAuth flaws, JWT
+              attacks, GraphQL injection, and business logic flaws — these are what bug bounties actually pay for.</div>
+            <ul class="tasks-list">
+              <li>Complete PortSwigger Web Academy: SSRF, XXE, Deserialization labs (all free)</li>
+              <li>Learn JWT attacks: none algorithm bypass, weak secret cracking</li>
+              <li>Learn OAuth 2.0 attack flows</li>
+              <li>Learn GraphQL introspection and injection</li>
+              <li>Complete 10 PortSwigger labs in advanced topics</li>
+              <li>Hack a real bug bounty target on HackerOne or Bugcrowd (ethical, legal)</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>10 advanced PortSwigger labs completed. You have submitted at least 1 bug bounty report (even if N/A or
+                duplicate). You can explain SSRF, XXE, and JWT attacks in a technical interview without notes.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://portswigger.net/web-security/all-labs" target="_blank">PortSwigger
+                All Labs (free)</a>
+              <a class="resource-link" href="https://hackerone.com/bug-bounty-programs" target="_blank">HackerOne Bug
+                Bounty Programs</a>
+              <a class="resource-link" href="https://bugcrowd.com/programs" target="_blank">Bugcrowd Programs</a>
+              <a class="resource-link" href="https://github.com/swisskyrepo/PayloadsAllTheThings"
+                target="_blank">PayloadsAllTheThings (GH)</a>
+              <a class="resource-link" href="https://github.com/nahamsec/Resources-for-Beginner-Bug-Bounty-Hunters"
+                target="_blank">Beginner Bug Bounty Resources (GH)</a>
+            </div>
+          </div>
+
+          <div class="topic">
+            <div class="topic-name">2. Certification Target: eJPT or CEH</div>
+            <div class="topic-learn">Certifications open doors in the job market. eJPT (by INE/eLearnSecurity) is a
+              hands-on, practical, affordable cert perfect for your level. It's respected and achievable.</div>
+            <ul class="tasks-list">
+              <li>Complete INE's free "Starter Pass" courses for eJPT prep</li>
+              <li>Take 3 practice lab exams on TryHackMe "Jr Penetration Tester" path</li>
+              <li>Book and pass the eJPT exam</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>eJPT certificate earned. Certificate on LinkedIn and resume. You can speak to every topic on the exam
+                in an interview.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://ine.com/certifications/ejpt-certification" target="_blank">eJPT
+                Certification (INE)</a>
+              <a class="resource-link" href="https://tryhackme.com/path/outline/jrpenetrationtester"
+                target="_blank">TryHackMe Jr Pentester Path</a>
+              <a class="resource-link" href="https://my.ine.com/CyberSecurity/courses/30a6b1" target="_blank">INE Free
+                Starter Pass (Cybersecurity)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Path B -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">PATH B</div>
+          <div class="project-title">DevSecOps / Cloud Security Engineer</div>
+          <div class="project-difficulty diff-advanced">ADVANCED</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Why this path:</strong> Your DevOps background makes this the highest-ROI
+            path. DevSecOps engineers command top salaries and are extremely rare — most companies desperately need
+            someone who speaks both languages. You're already 60% there.</div>
+
+          <div class="topic">
+            <div class="topic-name">1. Cloud Security (AWS/GCP Free Tier)</div>
+            <div class="topic-learn">The cloud has its own attack surface: misconfigured S3 buckets, overpermissioned
+              IAM roles, public Lambda functions, metadata service attacks (SSRF → cloud credentials). This is where the
+              money is.</div>
+            <ul class="tasks-list">
+              <li>Create a free AWS account, deploy a vulnerable-by-design cloud environment (CloudGoat by Rhino
+                Security)</li>
+              <li>Exploit: public S3 bucket, overpermissioned IAM role, exposed metadata service</li>
+              <li>Use Prowler or ScoutSuite to audit AWS for misconfigurations</li>
+              <li>Write an IaC security scan pipeline using Checkov (Terraform/CloudFormation)</li>
+              <li>Implement AWS Security Hub and GuardDuty (free trial)</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>CloudGoat scenarios completed. Prowler audit report generated. Checkov scans integrated into a GitHub
+                Actions pipeline. You can explain the shared responsibility model and 5 common cloud attack vectors.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://github.com/RhinoSecurityLabs/cloudgoat" target="_blank">CloudGoat —
+                Vulnerable AWS (GH)</a>
+              <a class="resource-link" href="https://github.com/prowler-cloud/prowler" target="_blank">Prowler AWS
+                Auditor (GH)</a>
+              <a class="resource-link" href="https://www.checkov.io" target="_blank">Checkov IaC Scanner</a>
+              <a class="resource-link" href="https://github.com/bridgecrewio/checkov" target="_blank">Checkov GitHub</a>
+              <a class="resource-link" href="https://tryhackme.com/room/awsbasics" target="_blank">TryHackMe AWS Basics
+                Room</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Path C -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">PATH C</div>
+          <div class="project-title">SOC Analyst / Threat Hunter (Blue Team)</div>
+          <div class="project-difficulty diff-intermediate">INTERMEDIATE</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Why this path:</strong> SOC Analyst is the most accessible entry point into
+            cybersecurity. High demand, many entry-level positions, and your SIEM lab from Phase 4 already makes you
+            qualified. Great for breaking into the field fast.</div>
+
+          <div class="topic">
+            <div class="topic-name">1. SOC Skills & Tools</div>
+            <div class="topic-learn">SOC Analysts spend their days triaging alerts, investigating incidents, and threat
+              hunting. The toolset includes SIEMs, EDR platforms, threat intel feeds, and ticketing systems.</div>
+            <ul class="tasks-list">
+              <li>Complete TryHackMe "SOC Level 1" learning path (completely free)</li>
+              <li>Practice threat hunting with the MITRE ATT&CK framework</li>
+              <li>Learn to use VirusTotal, Hybrid Analysis, and ANY.RUN for malware analysis</li>
+              <li>Analyze 5 real malware samples in a sandbox (use any.run free tier)</li>
+              <li>Write threat intel reports on each sample: IOCs, TTPs, attribution</li>
+              <li>Target: CompTIA Security+ certification</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>TryHackMe SOC Level 1 path 100% complete. 5 malware analysis reports written. You can map an attack to
+                MITRE ATT&CK techniques. Security+ exam passed (or scheduled). LinkedIn profile updated.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://tryhackme.com/path/outline/soclevel1" target="_blank">TryHackMe SOC
+                Level 1 (free)</a>
+              <a class="resource-link" href="https://attack.mitre.org" target="_blank">MITRE ATT&CK Framework</a>
+              <a class="resource-link" href="https://any.run" target="_blank">ANY.RUN Sandbox (free tier)</a>
+              <a class="resource-link"
+                href="https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/sy0-701-comptia-security-plus-course/"
+                target="_blank">Prof. Messer Security+ (FREE)</a>
+              <a class="resource-link" href="https://www.cyberdefenders.org" target="_blank">CyberDefenders SOC Labs
+                (free)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Final Project -->
+      <div class="project-card" onclick="toggleProject(this)">
+        <div class="project-header">
+          <div class="project-num">FINAL</div>
+          <div class="project-title">Capstone — Full Pentest Engagement (Mock Client) <span
+              class="resume-badge">RESUME</span></div>
+          <div class="project-difficulty diff-advanced">ADVANCED</div>
+          <div class="project-chevron">▼</div>
+        </div>
+        <div class="project-body">
+          <div class="project-goal"><strong>Goal:</strong> Simulate a real-world freelance pentest. Set up a complete
+            vulnerable environment (multiple VMs), perform a full engagement from scoping to reporting, and produce a
+            deliverable that looks identical to what a real security firm would hand a client.</div>
+
+          <div class="topic">
+            <div class="topic-name">Full Engagement Simulation</div>
+            <div class="topic-learn">This capstone ties everything together. You'll practice scoping, rules of
+              engagement, reconnaissance, exploitation, post-exploitation, persistence, cleanup, and reporting — the
+              full lifecycle.</div>
+            <ul class="tasks-list">
+              <li>Deploy a multi-VM environment: web server, database, Windows workstation, domain controller</li>
+              <li>Write a mock "Statement of Work" and "Rules of Engagement" document</li>
+              <li>Perform full recon, exploitation, PrivEsc, and lateral movement across VMs</li>
+              <li>Document everything as you go (take notes, screenshots, timestamps)</li>
+              <li>Write a full 20+ page professional pentest report</li>
+              <li>Record a 10-minute video walkthrough of your methodology (great for LinkedIn)</li>
+              <li>Upload all artifacts: report, notes, tools used, to GitHub</li>
+            </ul>
+            <div class="acceptance">
+              <div class="acceptance-label">✓ ACCEPTANCE CRITERIA</div>
+              <p>Complete professional pentest report (20+ pages). GitHub repository with all engagement artifacts.
+                Video walkthrough published. This is a capstone you can present in any security job interview as proof
+                of competence.</p>
+            </div>
+            <div class="resources">
+              <div class="resources-label">📡 FREE RESOURCES</div>
+              <a class="resource-link" href="https://github.com/hmaverickadams/TCM-Security-Sample-Pentest-Report"
+                target="_blank">TCM Sample Pentest Report (GH)</a>
+              <a class="resource-link" href="https://www.youtube.com/@TCMSecurityAcademy" target="_blank">TCM Security
+                Academy (YT)</a>
+              <a class="resource-link" href="https://github.com/juliocesarfort/public-pentesting-reports"
+                target="_blank">Public Pentest Reports (GH)</a>
+              <a class="resource-link" href="https://www.first.org/cvss/calculator/3.1" target="_blank">CVSS
+                Calculator</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function showPhase(index) {
+      document.querySelectorAll('.phase-panel').forEach((p, i) => {
+        p.classList.toggle('active', i === index);
+      });
+      document.querySelectorAll('.phase-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === index);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleProject(card) {
+      if (event && event.target && event.target.closest('.resource-link')) return;
+      card.classList.toggle('open');
+    }
+  </script>
+</body>
+
+</html>
