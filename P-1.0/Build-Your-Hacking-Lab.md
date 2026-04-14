@@ -48,9 +48,12 @@ Set up a safe, isolated VM lab on your Linux machine where you can attack and de
     - Settings → System → Processor: ✅ Check Enable PAE/NX
     - Settings → System → Processor: 1 CPU
     - Setting → System → Acceleration: Paravirtualization: Legacy
-- Network NAT: Allow direct access to host network but other vm can't access it.
-- Network Host-Only: Private Network No Network access to internet but other vm can access it.
-- Network Bridged: Allow direct access to host network and other vm can access it "The VM become a full device on the network".
+    
+- Network NAT: VM has internet via host, but is invisible to network
+
+- Network Host-Only: VM is in a private network with host + other VMs only, no internet.
+
+- Network Bridged: VM is a real device on the network with its own IP, visible to everything.
 
 
 ### 🔗 Verified Free Resources
