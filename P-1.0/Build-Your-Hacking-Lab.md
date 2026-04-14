@@ -41,7 +41,6 @@ Set up a safe, isolated VM lab on your Linux machine where you can attack and de
 > ✔ You can explain the difference between NAT, Bridged, and Host-Only networking from memory  
 
 ### 📝 Notes / Blockers
-```
 - When I create the Kali Vm and boot it for the first time. I must set NAT network then after it boot up for the first time I can change it to Host-Only network.
 - For Metasploitable2 Vm, the following setting: 
     - Settings → System → Motherboard: ❌ Uncheck Enable I/O APIC
@@ -52,7 +51,7 @@ Set up a safe, isolated VM lab on your Linux machine where you can attack and de
 - Network NAT: Allow direct access to host network but other vm can't access it.
 - Network Host-Only: Private Network No Network access to internet but other vm can access it.
 - Network Bridged: Allow direct access to host network and other vm can access it "The VM become a full device on the network".
-```
+
 
 ### 🔗 Verified Free Resources
 
