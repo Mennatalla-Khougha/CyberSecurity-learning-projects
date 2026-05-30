@@ -41,7 +41,7 @@ Set up a safe, isolated VM lab on your Linux machine where you can attack and de
 > ✔ You can explain the difference between NAT, Bridged, and Host-Only networking from memory  
 
 ### 📝 Notes / Blockers
-- When I create the Kali Vm and boot it for the first time. I must set NAT network then after it boot up for the first time I can change it to Host-Only network.
+- When I create the Kali Vm and boot it for the first time. I must set NAT network then after it boot up for the first time I can change it to Host-Only network when using windows as a host machine.
 - For Metasploitable2 Vm, the following setting: 
     - Settings → System → Motherboard: ❌ Uncheck Enable I/O APIC
     - Settings → System → Motherboard: RAM size 512MB
@@ -71,18 +71,22 @@ Set up a safe, isolated VM lab on your Linux machine where you can attack and de
 
 ## 🗂️ Topic 2 — Linux Security Hardening Basics
 
+**Status:** ✅ Completed 
+**Started:** 27/5/2026  
+**Completed:** 30/5/2026
+
 ### ✅ Tasks
-- [ ] Run `ss -tulpn` on your Ubuntu host — list all open ports and running services
-- [ ] Find all SUID binaries: `find / -perm -u=s -type f 2>/dev/null`
-- [ ] Create a new non-root user with `adduser`
-- [ ] Generate SSH keypair: `ssh-keygen -t ed25519`
-- [ ] Set up SSH key auth for the new user
-- [ ] Disable SSH password login in `/etc/ssh/sshd_config`
-- [ ] Disable root SSH login in `/etc/ssh/sshd_config`
-- [ ] Install and configure `ufw`: deny all incoming, allow only SSH
-- [ ] Read `/var/log/auth.log` — identify failed login attempts
-- [ ] Write a bash script that automates your hardening checklist
-- [ ] Save the script to your GitHub
+- [✅] Run `ss -tulpn` on your Ubuntu host — list all open ports and running services
+- [✅] Find all SUID binaries: `find / -perm -u=s -type f 2>/dev/null`
+- [✅] Create a new non-root user with `adduser`
+- [✅] Generate SSH keypair: `ssh-keygen -t ed25519`
+- [✅] Set up SSH key auth for the new user
+- [✅] Disable SSH password login in `/etc/ssh/sshd_config`
+- [✅] Disable root SSH login in `/etc/ssh/sshd_config`
+- [✅] Install and configure `ufw`: deny all incoming, allow only SSH
+- [✅] Read `/var/log/auth.log` — identify failed login attempts
+- [✅] Write a bash script that automates your hardening checklist
+- [✅] Save the script to your GitHub
 
 ### 🎯 Acceptance Criteria
 > ✔ Your hardening script runs cleanly without errors  
@@ -92,9 +96,39 @@ Set up a safe, isolated VM lab on your Linux machine where you can attack and de
 > ✔ You can explain what each firewall rule does  
 
 ### 📝 Notes / Blockers
+- `/proc/<PID>/` = kernel's live window into any running process
+  - exe     → symlink to the binary
+  - cmdline → full launch command (null-separated, pipe through tr '\0' ' ')
+  - fd/     → open files and sockets
+  - status  → uid, memory, state
+
+- When ss shows an unknown PID:
 ```
-<!-- write your notes here -->
+  1. ls -la /proc/<PID>/exe        (quickest)
+  2. cat /proc/<PID>/cmdline | tr '\0' ' '   (full command + args)
 ```
+----------------
+- SUID = trusted files that anyone can execute as root. Unlike sudo which trusts the user, SUID trusts the file itself. If you find a SUID binary that lets you spawn a shell from inside it, that shell runs as root — no password, no sudoers needed.
+
+- Red flags to look for:
+  - SUID on anything in /tmp or /home
+  - SUID on interpreters: python, perl, ruby, bash
+  - SUID on editors: vim, nano, less, more
+  - SUID on tools: find, nmap, wget, curl
+
+GTFOBins: https://gtfobins.github.io
+  → Check any suspicious SUID binary here during a pentest
+
+- Running the `find / -perm -u=s -type f 2>/dev/null` on the Metasploitable2 vm: provided a lot of files with SUID permission. One of them is `/usr/bin/nmap`. using the command `nmap --interactive` i was dropped into an interactive nmap shell. Then typing `!sh` dropped me into a root shell. checking with `whoami` confirmed that i am root. This means i can execute any command as root on the Metasploitable2 vm. 
+
+- When adding the keypair to the authorized_keys file of the new user on the ubuntu host i had to use `cat ~/.ssh/id_ed25519.pub | sudo tee /home/user1/.ssh/authorized_keys` i couldn't just use `>` i had to use `tee` command because the `>` command was redirecting the output of the `cat` command to the `authorized_keys` file as the `khougha` user not as the `sudo`. 
+
+- I wanted to only prevent password login for one user so i added 
+```
+Match User user1
+    PasswordAuthentication no
+```
+block at the end of the `/etc/ssh/sshd_config` file. Then restarted the ssh service using `sudo systemctl restart ssh`
 
 ### 🔗 Verified Free Resources
 
@@ -105,9 +139,10 @@ Set up a safe, isolated VM lab on your Linux machine where you can attack and de
 | Intro to Linux Permissions (DigitalOcean) | https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-permissions | Users, groups, file ownership concepts |
 | SUID, SGID, Sticky Bit (LinuxHandbook) | https://linuxhandbook.com/suid-sgid-sticky-bit/ | Special permissions — critical for PrivEsc later |
 | TryHackMe Linux Fundamentals 1 | https://tryhackme.com/room/linuxfundamentalspart1 | Hands-on Linux basics (free, no VPN needed for first room) |
-| TryHackMe Linux Fundamentals 2 | https://tryhackme.com/room/linuxfundamentalspart2 | File permissions, users, processes |
-| TryHackMe Linux Fundamentals 3 | https://tryhackme.com/room/linuxfundamentalspart3 | Automation, services, logs |
-
+| Linux Journey — User Management Tools | https://labex.io/lesson/user-management-tools | Users & groups (adduser, passwd, /etc/passwd) |
+| Linux Journey — File Permissions | https://labex.io/lesson/file-permissions | File permissions (chmod, chown, ls -l) |
+| Linux Journey — Modifying Permissions | https://labex.io/lesson/modifying-permissions | Modifying permissions (numeric + symbolic) |
+| Linux Journey — ps Command | https://labex.io/lesson/monitor-processes-ps-command | Processes (ps, top, kill) | 
 ---
 
 ## 🗂️ Topic 3 — Python for Security Scripting (Port Scanner Project)
